@@ -4,10 +4,12 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/satyamksharma/REST-Api-for-Event-Management-with-Authentication.git/db"
 	"github.com/satyamksharma/REST-Api-for-Event-Management-with-Authentication.git/models"
 )
 
 func main() {
+	db.InitDB()
 	server := gin.Default()
 
 	server.GET("/events", getEvents)
@@ -34,7 +36,7 @@ func createEvents(context *gin.Context){
 	event.UserID = 1
 
 	event.Save()
-	
+
 	context.JSON(http.StatusCreated, gin.H{"message":"Event Created!", "event": event})
 }
 
