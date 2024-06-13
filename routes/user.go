@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/satyamksharma/REST-Api-for-Event-Management-with-Authentication.git/models"
+	"github.com/satyamksharma/REST-Api-for-Event-Management-with-Authentication.git/utils"
 )
 
 func signup(context *gin.Context) {
@@ -40,5 +41,13 @@ func login(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"message": "User Logged In Successfully!"})
+	token, err := utils.GenerateToken(user.Email, user.ID)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not Authenticate user, Please try later!"})
+		return
+	}
+
+
+
+	context.JSON(http.StatusOK, gin.H{"message": "User Logged In Successfully!", "token": token})
 }
