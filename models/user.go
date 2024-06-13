@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/satyamksharma/REST-Api-for-Event-Management-with-Authentication.git/db"
 	"github.com/satyamksharma/REST-Api-for-Event-Management-with-Authentication.git/utils"
 )
@@ -35,4 +37,22 @@ func (u User) Save() error {
 
 	u.ID = userId
 	return err
+}
+
+func (u User) ValidateCredentials() error {
+	query := "SELECT password FROM users WHERE email = ?"
+	row := db.DB.QueryRow(query, u.Email)
+
+	var retrievedPassword string
+	err := row.Scan(&retrievedPassword)
+	if err != nil {
+		return err
+	}
+
+	passwordIsValid := utils.CheckPasswordHash(u.Password, retrievedPassword)
+	if !passwordIsValid {
+		return errors.New("invalid email or password")
+	}
+
+	return nil
 }
